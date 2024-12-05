@@ -9,7 +9,7 @@ This project fetches and displays student nationality and enrollment data from t
 
 ## File Structure
 - `assignment3.html` - The main HTML file containing the structure and logic.
-- `ass.css` - Custom styles for the project (optional).
+- `ass.css` - Custom styles for the project (An addition from us).
 - `README.md` - This documentation file.
 
 
