@@ -4,13 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>University of Bahrain Student Nationality Data</title>
+    <!-- Adding a pico for styling the page -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
 </head>
 <body>
     <div class="container">
-        <h1>University of Bahrain Student Nationality Data Table </h1>
+        <h1>University of Bahrain Student Nationality Data Table</h1>
         <table id="studentTable">
             <thead>
+                <!-- Table headers -->
                 <tr>
                     <th>Year</th>
                     <th>Semester</th>
@@ -21,60 +23,80 @@
                 </tr>
             </thead>
             <tbody id="tableBody">
-                <!-- Data will be dynamically inserted here -->
+                <!-- Rows will be added here by JavaScript -->
             </tbody>
         </table>
     </div>
 
     <script>
+        // API URL to get the data
         const API_URL = "https://data.gov.bh/api/explore/v2.1/catalog/datasets/01-statistics-of-students-nationalities_updated/records?where=colleges%20like%20%22IT%22%20AND%20the_programs%20like%20%22bachelor%22&limit=100";
+        
+        // Proxy URL to fix data access issues
         const PROXY_URL = "https://api.allorigins.win/get?url=";
 
+        // Function to fetch data and display it in the table
         async function fetchStudentData() {
             try {
+                // Build the request URL using the proxy
                 const requestUrl = PROXY_URL + encodeURIComponent(API_URL);
+
+                // Get data from the API
                 const response = await fetch(requestUrl);
 
+                // Check if the response is OK
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
 
-                // Parse JSON (because AllOrigins wraps data in 'contents')
+                // Get the actual data from the response
                 const data = await response.json();
                 const jsonData = JSON.parse(data.contents);
 
+                // Find the table body element
                 const tableBody = document.getElementById('tableBody');
+
+                // Clear any existing rows in the table
                 tableBody.innerHTML = '';
 
+                // Check if there is data in the results
                 if (jsonData.results && jsonData.results.length > 0) {
+                    // Go through each record in the data
                     jsonData.results.forEach(record => {
+                        // Create a new row
                         const row = document.createElement('tr');
+
+                        // Add the data to the row
                         const cells = [
-                            record.year ?? 'N/A',
-                            record.semester ?? 'N/A',
-                            record.colleges ?? 'N/A',
-                            record.the_programs ?? 'N/A',
-                            record.nationality ?? 'N/A',
-                            record.number_of_students ?? 'N/A'
+                            record.year ?? 'N/A',         // Year
+                            record.semester ?? 'N/A',    // Semester
+                            record.colleges ?? 'N/A',    // College
+                            record.the_programs ?? 'N/A',// Program
+                            record.nationality ?? 'N/A', // Nationality
+                            record.number_of_students ?? 'N/A' // Number of students
                         ];
 
+                        // Add each piece of data as a cell
                         cells.forEach(cellData => {
                             const cell = document.createElement('td');
                             cell.textContent = cellData;
                             row.appendChild(cell);
                         });
 
+                        // Add the row to the table
                         tableBody.appendChild(row);
                     });
                 } else {
+                    // If no data, show a message in the table
                     const noDataRow = document.createElement('tr');
                     const noDataCell = document.createElement('td');
-                    noDataCell.colSpan = 6;
+                    noDataCell.colSpan = 6; // Span across all columns
                     noDataCell.textContent = 'No data found';
                     noDataRow.appendChild(noDataCell);
                     tableBody.appendChild(noDataRow);
                 }
             } catch (error) {
+                // If there is an error, show an error message in the table
                 console.error('Error fetching student data:', error);
                 const tableBody = document.getElementById('tableBody');
                 tableBody.innerHTML = `
@@ -84,6 +106,7 @@
             }
         }
 
+        // Run the fetchStudentData function after the page loads
         document.addEventListener('DOMContentLoaded', fetchStudentData);
     </script>
 </body>
